@@ -5,18 +5,19 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D rb;
-    private bool isGrounded;
-    private bool isSliding = false;
-    public float jumpSpeed;
-    private int jumpCount;
     public BoxCollider2D boxCollider2D;
     public Animator animator;
     public float jumpBufferTime;
     public AudioSource jumpSound;
     public AudioSource dieSound;
     public AudioSource slideSound;
+    private bool isGrounded;
+    public float jumpSpeed;
+    private int jumpCount;
+    public float downSpeed;
     private Vector2 coliderSize;
     private float jumpBufferCounter;
+
     private void Start()
     {
         coliderSize = boxCollider2D.size;
@@ -26,9 +27,6 @@ public class PlayerController : MonoBehaviour
         SetColliderSize();
         Slide();
         Jump();
-
-
-
     }
     private void Jump()
     {
@@ -48,15 +46,18 @@ public class PlayerController : MonoBehaviour
             jumpSound.Play();
             jumpBufferCounter = 0;
         }
-
-
     }
     private void Slide()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isGrounded)
+        if (Input.GetKey(KeyCode.LeftControl))
         {
-            animator.SetBool("isSliding", true);
-            slideSound.Play();
+            rb.linearVelocityY = -downSpeed;
+            if (isGrounded)
+            {
+                animator.SetBool("isSliding", true);
+                slideSound.Play();
+            }
+
         }
         else if (Input.GetKeyUp(KeyCode.LeftControl))
         {
@@ -87,6 +88,5 @@ public class PlayerController : MonoBehaviour
         {
             boxCollider2D.size = coliderSize;
         }
-
     }
 }
